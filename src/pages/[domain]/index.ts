@@ -1,38 +1,53 @@
 import type { APIRoute } from "astro";
+import { invalidDomains, titleElements } from "../../utils/constants";
+import { isValidDomain } from "../../utils/is-valid-domain";
+import * as cheerio from "cheerio";
+import { getDataFromHtml } from "../../utils/get-data-from-html";
 
 export const GET: APIRoute = async ({ params }) => {
   try {
     const domain = params.domain;
 
+    if (!domain) {
+      return new Response(JSON.stringify({ error: "Domain is required" }), {
+        headers: { "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
+    if (invalidDomains.includes(domain)) {
+      return new Response(JSON.stringify({ error: "Invalid domain" }), {
+        headers: { "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
+    if (!isValidDomain(domain)) {
+      return new Response(JSON.stringify({ error: "Invalid domain format" }), {
+        headers: { "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
     const domainResponse = await fetch(`https://${domain}`);
-
     const domainBody = await domainResponse.text();
-    const domainTitle = domainBody.match(/<title>(.*?)<\/title>/)?.[1];
-    const domainDescription = domainBody.match(
-      /<meta name="description" content="(.*?)"/
-    )?.[1];
-    const domainImage = domainBody.match(
-      /<meta property="og:image" content="(.*?)"/
-    )?.[1];
-    const domainUrl = domainBody.match(
-      /<meta property="og:url" content="(.*?)"/
-    )?.[1];
 
+    const metadata = await getDataFromHtml(domainBody);
+
+    // return new Response(domainBody);
     return new Response(
       JSON.stringify({
-        title: domainTitle,
-        description: domainDescription,
-        image: domainImage,
-        url: domainUrl,
+        status: "success",
+        data: metadata,
       }),
       {
         headers: { "Content-Type": "application/json" },
       }
     );
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return new Response(
-      JSON.stringify({ error: "Invalid domain", details: error }),
+      JSON.stringify({ status: "fail", error: "Something went wrong" }),
       {
         headers: { "Content-Type": "application/json" },
         status: 400,
