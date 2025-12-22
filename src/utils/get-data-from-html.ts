@@ -33,7 +33,7 @@ export const getDataFromHtml = async (html: string): Promise<Metadata> => {
     }
   }
   for (const selector of descriptionElements) {
-    const text = cheerioData(selector).text();
+    const text = cheerioData(selector).attr("content");
     if (text) {
       description = text;
       break;
