@@ -1,7 +1,6 @@
 import type { APIRoute } from "astro";
-import { invalidDomains, titleElements } from "../../utils/constants";
+import { invalidDomains } from "../../utils/constants";
 import { isValidDomain } from "../../utils/is-valid-domain";
-import * as cheerio from "cheerio";
 import { getDataFromHtml } from "../../utils/get-data-from-html";
 
 export const GET: APIRoute = async ({ params }) => {
