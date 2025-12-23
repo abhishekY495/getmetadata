@@ -1,13 +1,11 @@
 export const invalidDomains = ["favicon.ico", "robots.txt", "sitemap.xml"];
 
 export const titleElements = ["head > title", "title"];
-
 export const descriptionElements = [
   "head > meta[name='description']",
   "meta[property='og:description']",
   "meta[name='twitter:description']",
 ];
-
 export const iconElements = [
   "head > link[rel='icon']",
   "head > link[rel='shortcut icon']",
