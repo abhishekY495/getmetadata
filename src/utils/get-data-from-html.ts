@@ -11,8 +11,12 @@ import {
   twitterImageElements,
   twitterTitleElements,
 } from "./constants";
+import { normalizeIconUrl } from "./normalize-icon-url";
 
-export const getDataFromHtml = async (html: string): Promise<Metadata> => {
+export const getDataFromHtml = async (
+  html: string,
+  domain: string
+): Promise<Metadata> => {
   const cheerioData = cheerio.load(html);
 
   let title = null;
@@ -42,7 +46,7 @@ export const getDataFromHtml = async (html: string): Promise<Metadata> => {
   for (const selector of iconElements) {
     const href = cheerioData(selector).attr("href");
     if (href) {
-      icon = href;
+      icon = normalizeIconUrl(href, domain);
       break;
     }
   }

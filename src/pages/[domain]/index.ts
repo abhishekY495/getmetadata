@@ -31,7 +31,7 @@ export const GET: APIRoute = async ({ params }) => {
     const domainResponse = await fetch(`https://${domain}`);
     const domainBody = await domainResponse.text();
 
-    const metadata = await getDataFromHtml(domainBody);
+    const metadata = await getDataFromHtml(domainBody, domain);
 
     // return new Response(domainBody);
     return new Response(
