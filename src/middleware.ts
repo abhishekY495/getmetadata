@@ -6,13 +6,7 @@ export const onRequest = defineMiddleware((context, next) => {
   const domain = context.params.domain;
 
   if (!domain) {
-    return new Response(
-      JSON.stringify({ status: "fail", error: "Domain is required" }),
-      {
-        headers: { "Content-Type": "application/json" },
-        status: 400,
-      }
-    );
+    return next();
   }
 
   if (INVALID_DOMAINS.includes(domain)) {
