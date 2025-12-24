@@ -9,24 +9,33 @@ export const GET: APIRoute = async ({ params }) => {
     let ogImage = null;
 
     if (!domain) {
-      return new Response(JSON.stringify({ error: "Domain is required" }), {
-        headers: { "Content-Type": "application/json" },
-        status: 400,
-      });
+      return new Response(
+        JSON.stringify({ status: "fail", error: "Domain is required" }),
+        {
+          headers: { "Content-Type": "application/json" },
+          status: 400,
+        }
+      );
     }
 
     if (invalidDomains.includes(domain)) {
-      return new Response(JSON.stringify({ error: "Invalid domain" }), {
-        headers: { "Content-Type": "application/json" },
-        status: 400,
-      });
+      return new Response(
+        JSON.stringify({ status: "fail", error: "Invalid domain" }),
+        {
+          headers: { "Content-Type": "application/json" },
+          status: 400,
+        }
+      );
     }
 
     if (!isValidDomain(domain)) {
-      return new Response(JSON.stringify({ error: "Invalid domain format" }), {
-        headers: { "Content-Type": "application/json" },
-        status: 400,
-      });
+      return new Response(
+        JSON.stringify({ status: "fail", error: "Invalid domain format" }),
+        {
+          headers: { "Content-Type": "application/json" },
+          status: 400,
+        }
+      );
     }
 
     const domainResponse = await fetch(`https://${domain}`);
