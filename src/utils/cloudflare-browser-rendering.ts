@@ -21,6 +21,9 @@ export const cloudflareBrowserRendering = async (domain: string) => {
     return content;
   } catch (error) {
     console.error(error);
-    throw new Error("Something went wrong with Cloudflare Browser Rendering");
+    throw new Error(
+      (error as Error).message ??
+        "Something went wrong with Cloudflare Browser Rendering"
+    );
   }
 };
