@@ -44,13 +44,10 @@ export const GET: APIRoute = async ({ params }) => {
       }
     );
   } catch (error) {
-    // console.error(error);
-    return new Response(
-      JSON.stringify({ status: "fail", error: "Something went wrong" }),
-      {
-        headers: { "Content-Type": "application/json" },
-        status: 400,
-      }
-    );
+    console.error(error);
+    return new Response(JSON.stringify({ status: "fail", error: error }), {
+      headers: { "Content-Type": "application/json" },
+      status: 400,
+    });
   }
 };
