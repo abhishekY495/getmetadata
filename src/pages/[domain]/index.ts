@@ -2,6 +2,9 @@ import type { APIRoute } from "astro";
 import { USER_AGENT } from "../../utils/constants";
 import { getDataFromHtml } from "../../utils/get-data-from-html";
 import { fetchWithTimeout } from "../../utils/fetch-with-timeout";
+import { cloudflareBrowserRendering } from "../../utils/cloudflare-browser-rendering";
+import { doesMetadataHaveNull } from "../../utils/does-metadata-have-null-values";
+import { mergeMetadata } from "../../utils/merge-metadata";
 
 export const GET: APIRoute = async ({ params }) => {
   try {
@@ -13,7 +16,21 @@ export const GET: APIRoute = async ({ params }) => {
       },
     });
     const domainBody = await domainResponse.text();
-    const metadata = await getDataFromHtml(domainBody, domain);
+    let metadata = await getDataFromHtml(domainBody, domain);
+
+    // If metadata is incomplete, try Cloudflare Browser Rendering
+    if (doesMetadataHaveNull(metadata)) {
+      console.log("Trying Cloudflare Browser Rendering");
+      const browserRenderingResult = await cloudflareBrowserRendering(domain);
+
+      if (browserRenderingResult) {
+        const browserMetadata = await getDataFromHtml(
+          browserRenderingResult,
+          domain
+        );
+        metadata = mergeMetadata(metadata, browserMetadata);
+      }
+    }
 
     // return new Response(domainBody);
     return new Response(
