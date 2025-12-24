@@ -1,46 +1,11 @@
 import type { APIRoute } from "astro";
-import {
-  INVALID_DOMAINS,
-  OG_IMAGE_ELEMENTS,
-  USER_AGENT,
-} from "../../utils/constants";
-import { isValidDomain } from "../../utils/is-valid-domain";
+import { OG_IMAGE_ELEMENTS, USER_AGENT } from "../../utils/constants";
 import * as cheerio from "cheerio";
 
 export const GET: APIRoute = async ({ params }) => {
   try {
-    const domain = params.domain;
+    const domain = params.domain!;
     let ogImage = null;
-
-    if (!domain) {
-      return new Response(
-        JSON.stringify({ status: "fail", error: "Domain is required" }),
-        {
-          headers: { "Content-Type": "application/json" },
-          status: 400,
-        }
-      );
-    }
-
-    if (INVALID_DOMAINS.includes(domain)) {
-      return new Response(
-        JSON.stringify({ status: "fail", error: "Invalid domain" }),
-        {
-          headers: { "Content-Type": "application/json" },
-          status: 400,
-        }
-      );
-    }
-
-    if (!isValidDomain(domain)) {
-      return new Response(
-        JSON.stringify({ status: "fail", error: "Invalid domain format" }),
-        {
-          headers: { "Content-Type": "application/json" },
-          status: 400,
-        }
-      );
-    }
 
     const domainResponse = await fetch(`https://${domain}`, {
       headers: {
@@ -81,9 +46,15 @@ export const GET: APIRoute = async ({ params }) => {
     });
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ status: "fail", error: error }), {
-      headers: { "Content-Type": "application/json" },
-      status: 400,
-    });
+    return new Response(
+      JSON.stringify({
+        status: "fail",
+        error: (error as Error).message ?? "Something went wrong",
+      }),
+      {
+        headers: { "Content-Type": "application/json" },
+        status: 400,
+      }
+    );
   }
 };

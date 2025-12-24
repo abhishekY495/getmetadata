@@ -1,47 +1,12 @@
 import type { APIRoute } from "astro";
-import {
-  ICON_ELEMENTS,
-  INVALID_DOMAINS,
-  USER_AGENT,
-} from "../../utils/constants";
-import { isValidDomain } from "../../utils/is-valid-domain";
+import { ICON_ELEMENTS, USER_AGENT } from "../../utils/constants";
 import { normalizeIconUrl } from "../../utils/normalize-icon-url";
 import * as cheerio from "cheerio";
 
 export const GET: APIRoute = async ({ params }) => {
   try {
-    const domain = params.domain;
+    const domain = params.domain!;
     let icon = null;
-
-    if (!domain) {
-      return new Response(
-        JSON.stringify({ status: "fail", error: "Domain is required" }),
-        {
-          headers: { "Content-Type": "application/json" },
-          status: 400,
-        }
-      );
-    }
-
-    if (INVALID_DOMAINS.includes(domain)) {
-      return new Response(
-        JSON.stringify({ status: "fail", error: "Invalid domain" }),
-        {
-          headers: { "Content-Type": "application/json" },
-          status: 400,
-        }
-      );
-    }
-
-    if (!isValidDomain(domain)) {
-      return new Response(
-        JSON.stringify({ status: "fail", error: "Invalid domain format" }),
-        {
-          headers: { "Content-Type": "application/json" },
-          status: 400,
-        }
-      );
-    }
 
     const domainResponse = await fetch(`https://${domain}`, {
       headers: {
