@@ -1,40 +1,44 @@
-export const invalidDomains = ["favicon.ico", "robots.txt", "sitemap.xml"];
+export const INVALID_DOMAINS = ["favicon.ico", "robots.txt", "sitemap.xml"];
 
-export const titleElements = ["head > title", "title"];
-export const descriptionElements = [
+export const TITLE_ELEMENTS = ["head > title", "title"];
+export const DESCRIPTION_ELEMENTS = [
   "head > meta[name='description']",
   "meta[property='og:description']",
   "meta[name='twitter:description']",
 ];
-export const iconElements = [
+export const ICON_ELEMENTS = [
   "head > link[rel='icon']",
   "head > link[rel='shortcut icon']",
+  "head > link[rel='apple-touch-icon']",
 ];
 
 // Open Graph
-export const ogTitleElements = [
+export const OG_TITLE_ELEMENTS = [
   "head > meta[property='og:title']",
   "meta[property='og:title']",
 ];
-export const ogDescriptionElements = [
+export const OG_DESCRIPTION_ELEMENTS = [
   "head > meta[property='og:description']",
   "meta[property='og:description']",
 ];
-export const ogImageElements = [
+export const OG_IMAGE_ELEMENTS = [
   "head > meta[property='og:image']",
   "meta[property='og:image']",
 ];
 
 // Twitter
-export const twitterTitleElements = [
+export const TWITTER_TITLE_ELEMENTS = [
   "head > meta[name='twitter:title']",
   "meta[name='twitter:title']",
 ];
-export const twitterDescriptionElements = [
+export const TWITTER_DESCRIPTION_ELEMENTS = [
   "head > meta[name='twitter:description']",
   "meta[name='twitter:description']",
 ];
-export const twitterImageElements = [
+export const TWITTER_IMAGE_ELEMENTS = [
   "head > meta[name='twitter:image']",
   "meta[name='twitter:image']",
 ];
+
+//
+export const USER_AGENT = "GetMetaDataBot/1.0 (https://getmetadata.pages.dev)";
