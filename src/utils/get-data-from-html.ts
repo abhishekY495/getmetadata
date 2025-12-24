@@ -1,15 +1,15 @@
 import * as cheerio from "cheerio";
 import type { Metadata } from "../types";
 import {
-  descriptionElements,
-  iconElements,
-  ogDescriptionElements,
-  ogImageElements,
-  ogTitleElements,
-  titleElements,
-  twitterDescriptionElements,
-  twitterImageElements,
-  twitterTitleElements,
+  DESCRIPTION_ELEMENTS,
+  ICON_ELEMENTS,
+  OG_DESCRIPTION_ELEMENTS,
+  OG_IMAGE_ELEMENTS,
+  OG_TITLE_ELEMENTS,
+  TITLE_ELEMENTS,
+  TWITTER_DESCRIPTION_ELEMENTS,
+  TWITTER_IMAGE_ELEMENTS,
+  TWITTER_TITLE_ELEMENTS,
 } from "./constants";
 import { normalizeIconUrl } from "./normalize-icon-url";
 
@@ -29,21 +29,21 @@ export const getDataFromHtml = async (
   let twitterDescription = null;
   let twitterImage = null;
 
-  for (const selector of titleElements) {
+  for (const selector of TITLE_ELEMENTS) {
     const text = cheerioData(selector).text();
     if (text) {
       title = text;
       break;
     }
   }
-  for (const selector of descriptionElements) {
+  for (const selector of DESCRIPTION_ELEMENTS) {
     const text = cheerioData(selector).attr("content");
     if (text) {
       description = text;
       break;
     }
   }
-  for (const selector of iconElements) {
+  for (const selector of ICON_ELEMENTS) {
     const href = cheerioData(selector).attr("href");
     if (href) {
       icon = normalizeIconUrl(href, domain);
@@ -51,21 +51,21 @@ export const getDataFromHtml = async (
     }
   }
 
-  for (const selector of ogTitleElements) {
+  for (const selector of OG_TITLE_ELEMENTS) {
     const text = cheerioData(selector).attr("content");
     if (text) {
       ogTitle = text;
       break;
     }
   }
-  for (const selector of ogDescriptionElements) {
+  for (const selector of OG_DESCRIPTION_ELEMENTS) {
     const text = cheerioData(selector).attr("content");
     if (text) {
       ogDescription = text;
       break;
     }
   }
-  for (const selector of ogImageElements) {
+  for (const selector of OG_IMAGE_ELEMENTS) {
     const text = cheerioData(selector).attr("content");
     if (text) {
       ogImage = text;
@@ -73,21 +73,21 @@ export const getDataFromHtml = async (
     }
   }
 
-  for (const selector of twitterTitleElements) {
+  for (const selector of TWITTER_TITLE_ELEMENTS) {
     const text = cheerioData(selector).attr("content");
     if (text) {
       twitterTitle = text;
       break;
     }
   }
-  for (const selector of twitterDescriptionElements) {
+  for (const selector of TWITTER_DESCRIPTION_ELEMENTS) {
     const text = cheerioData(selector).attr("content");
     if (text) {
       twitterDescription = text;
       break;
     }
   }
-  for (const selector of twitterImageElements) {
+  for (const selector of TWITTER_IMAGE_ELEMENTS) {
     const text = cheerioData(selector).attr("content");
     if (text) {
       twitterImage = text;
