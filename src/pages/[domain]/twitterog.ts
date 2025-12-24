@@ -1,11 +1,18 @@
 import type { APIRoute } from "astro";
-import { TWITTER_IMAGE_ELEMENTS, USER_AGENT } from "../../utils/constants";
+import {
+  FALLBACK_OG_IMAGE_URL,
+  TWITTER_IMAGE_ELEMENTS,
+  USER_AGENT,
+} from "../../utils/constants";
 import { fetchWithTimeout } from "../../utils/fetch-with-timeout";
 import * as cheerio from "cheerio";
+import { isValidDomain } from "../../utils/is-valid-domain";
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ params, url }) => {
   try {
     const domain = params.domain!;
+    const fallback = url.searchParams.get("fallback");
+
     let twitterImage = null;
 
     const domainResponse = await fetchWithTimeout(`https://${domain}`, {
@@ -25,8 +32,42 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     if (!twitterImage) {
-      return new Response(JSON.stringify({ status: "success", data: null }), {
-        headers: { "Content-Type": "application/json" },
+      // Use custom fallback if provided and valid
+      if (fallback && fallback.length > 0) {
+        const isFallbackValid = isValidDomain(fallback);
+        if (!isFallbackValid) {
+          return new Response(
+            JSON.stringify({
+              status: "fail",
+              error: "Invalid fallback domain",
+            }),
+            {
+              headers: { "Content-Type": "application/json" },
+              status: 400,
+            }
+          );
+        }
+
+        const twitterImageResponse = await fetchWithTimeout(fallback, {
+          headers: { "User-Agent": USER_AGENT },
+        });
+        const twitterImageBuffer = await twitterImageResponse.arrayBuffer();
+        return new Response(twitterImageBuffer, {
+          headers: { "Content-Type": "image/png" },
+          status: 200,
+        });
+      }
+
+      // Default: use fallback image
+      const twitterImageResponse = await fetchWithTimeout(
+        FALLBACK_OG_IMAGE_URL,
+        {
+          headers: { "User-Agent": USER_AGENT },
+        }
+      );
+      const twitterImageBuffer = await twitterImageResponse.arrayBuffer();
+      return new Response(twitterImageBuffer, {
+        headers: { "Content-Type": "image/png" },
         status: 200,
       });
     }

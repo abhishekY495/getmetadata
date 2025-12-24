@@ -1,6 +1,12 @@
 export const isValidDomain = (domain: string) => {
   try {
-    const url = new URL(`https://${domain}`);
+    let url: URL;
+
+    if (domain.startsWith("https://")) {
+      url = new URL(domain);
+    } else {
+      url = new URL(`https://${domain}`);
+    }
 
     // Must have at least one dot
     if (!url.hostname.includes(".")) return false;

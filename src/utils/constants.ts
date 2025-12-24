@@ -42,3 +42,6 @@ export const TWITTER_IMAGE_ELEMENTS = [
 
 //
 export const USER_AGENT = "GetMetaDataBot/1.0 (https://getmetadata.pages.dev)";
+
+export const FALLBACK_OG_IMAGE_URL =
+  "https://getmetadata.pages.dev/og-image.png";

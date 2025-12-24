@@ -3,10 +3,13 @@ import { ICON_ELEMENTS, USER_AGENT } from "../../utils/constants";
 import { normalizeIconUrl } from "../../utils/normalize-icon-url";
 import { fetchWithTimeout } from "../../utils/fetch-with-timeout";
 import * as cheerio from "cheerio";
+import { isValidDomain } from "../../utils/is-valid-domain";
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ params, url }) => {
   try {
     const domain = params.domain!;
+    const fallback = url.searchParams.get("fallback");
+
     let icon = null;
 
     const domainResponse = await fetchWithTimeout(`https://${domain}`, {
@@ -26,12 +29,37 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     if (!icon) {
+      // Use custom fallback if provided and valid
+      if (fallback && fallback.length > 0) {
+        const isFallbackValid = isValidDomain(fallback);
+        if (!isFallbackValid) {
+          return new Response(
+            JSON.stringify({
+              status: "fail",
+              error: "Invalid fallback domain",
+            }),
+            {
+              headers: { "Content-Type": "application/json" },
+              status: 400,
+            }
+          );
+        }
+
+        const iconResponse = await fetchWithTimeout(fallback, {
+          headers: { "User-Agent": USER_AGENT },
+        });
+        const iconBuffer = await iconResponse.arrayBuffer();
+        return new Response(iconBuffer, {
+          headers: { "Content-Type": "image/png" },
+          status: 200,
+        });
+      }
+
+      // Default: use Google's favicon service
       const iconResponse = await fetchWithTimeout(
         `https://www.google.com/s2/favicons?domain_url=${domain}&sz=128`,
         {
-          headers: {
-            "User-Agent": USER_AGENT,
-          },
+          headers: { "User-Agent": USER_AGENT },
         }
       );
       const iconBuffer = await iconResponse.arrayBuffer();

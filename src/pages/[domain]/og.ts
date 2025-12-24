@@ -1,11 +1,18 @@
 import type { APIRoute } from "astro";
-import { OG_IMAGE_ELEMENTS, USER_AGENT } from "../../utils/constants";
+import {
+  FALLBACK_OG_IMAGE_URL,
+  OG_IMAGE_ELEMENTS,
+  USER_AGENT,
+} from "../../utils/constants";
 import { fetchWithTimeout } from "../../utils/fetch-with-timeout";
 import * as cheerio from "cheerio";
+import { isValidDomain } from "../../utils/is-valid-domain";
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ params, url }) => {
   try {
     const domain = params.domain!;
+    const fallback = url.searchParams.get("fallback");
+
     let ogImage = null;
 
     const domainResponse = await fetchWithTimeout(`https://${domain}`, {
@@ -25,8 +32,39 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     if (!ogImage) {
-      return new Response(JSON.stringify({ status: "success", data: null }), {
-        headers: { "Content-Type": "application/json" },
+      // Use custom fallback if provided and valid
+      if (fallback && fallback.length > 0) {
+        const isFallbackValid = isValidDomain(fallback);
+        if (!isFallbackValid) {
+          return new Response(
+            JSON.stringify({
+              status: "fail",
+              error: "Invalid fallback domain",
+            }),
+            {
+              headers: { "Content-Type": "application/json" },
+              status: 400,
+            }
+          );
+        }
+
+        const ogImageResponse = await fetchWithTimeout(fallback, {
+          headers: { "User-Agent": USER_AGENT },
+        });
+        const ogImageBuffer = await ogImageResponse.arrayBuffer();
+        return new Response(ogImageBuffer, {
+          headers: { "Content-Type": "image/png" },
+          status: 200,
+        });
+      }
+
+      // Default: use fallback image
+      const ogImageResponse = await fetchWithTimeout(FALLBACK_OG_IMAGE_URL, {
+        headers: { "User-Agent": USER_AGENT },
+      });
+      const ogImageBuffer = await ogImageResponse.arrayBuffer();
+      return new Response(ogImageBuffer, {
+        headers: { "Content-Type": "image/png" },
         status: 200,
       });
     }
