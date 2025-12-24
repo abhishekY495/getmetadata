@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { ICON_ELEMENTS, USER_AGENT } from "../../utils/constants";
 import { normalizeIconUrl } from "../../utils/normalize-icon-url";
+import { fetchWithTimeout } from "../../utils/fetch-with-timeout";
 import * as cheerio from "cheerio";
 
 export const GET: APIRoute = async ({ params }) => {
@@ -8,7 +9,7 @@ export const GET: APIRoute = async ({ params }) => {
     const domain = params.domain!;
     let icon = null;
 
-    const domainResponse = await fetch(`https://${domain}`, {
+    const domainResponse = await fetchWithTimeout(`https://${domain}`, {
       headers: {
         "User-Agent": USER_AGENT,
       },
@@ -25,7 +26,7 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     if (!icon) {
-      const iconResponse = await fetch(
+      const iconResponse = await fetchWithTimeout(
         `https://www.google.com/s2/favicons?domain_url=${domain}&sz=128`,
         {
           headers: {
@@ -41,7 +42,7 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     const iconUrl = normalizeIconUrl(icon, domain);
-    const iconResponse = await fetch(iconUrl, {
+    const iconResponse = await fetchWithTimeout(iconUrl, {
       headers: {
         "User-Agent": USER_AGENT,
       },
@@ -55,6 +56,19 @@ export const GET: APIRoute = async ({ params }) => {
       status: 200,
     });
   } catch (error) {
+    if ((error as Error).name === "AbortError") {
+      return new Response(
+        JSON.stringify({
+          status: "fail",
+          error: "Took too long to respond",
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+          status: 504,
+        }
+      );
+    }
+
     console.error(error);
     return new Response(
       JSON.stringify({

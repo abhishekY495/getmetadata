@@ -1,18 +1,18 @@
 import type { APIRoute } from "astro";
 import { USER_AGENT } from "../../utils/constants";
 import { getDataFromHtml } from "../../utils/get-data-from-html";
+import { fetchWithTimeout } from "../../utils/fetch-with-timeout";
 
 export const GET: APIRoute = async ({ params }) => {
   try {
     const domain = params.domain!;
 
-    const domainResponse = await fetch(`https://${domain}`, {
+    const domainResponse = await fetchWithTimeout(`https://${domain}`, {
       headers: {
         "User-Agent": USER_AGENT,
       },
     });
     const domainBody = await domainResponse.text();
-
     const metadata = await getDataFromHtml(domainBody, domain);
 
     // return new Response(domainBody);
@@ -27,6 +27,20 @@ export const GET: APIRoute = async ({ params }) => {
     );
   } catch (error) {
     console.error(error);
+
+    if ((error as Error).name === "AbortError") {
+      return new Response(
+        JSON.stringify({
+          status: "fail",
+          error: "Took too long to respond",
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+          status: 504,
+        }
+      );
+    }
+
     return new Response(
       JSON.stringify({
         status: "fail",
