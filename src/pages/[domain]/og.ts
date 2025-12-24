@@ -46,6 +46,8 @@ export const GET: APIRoute = async ({ params }) => {
       status: 200,
     });
   } catch (error) {
+    console.error(error);
+
     if ((error as Error).name === "AbortError") {
       return new Response(
         JSON.stringify({
@@ -59,7 +61,6 @@ export const GET: APIRoute = async ({ params }) => {
       );
     }
 
-    console.error(error);
     return new Response(
       JSON.stringify({
         status: "fail",
