@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { invalidDomains } from "../../utils/constants";
+import { INVALID_DOMAINS, USER_AGENT } from "../../utils/constants";
 import { isValidDomain } from "../../utils/is-valid-domain";
 import { getDataFromHtml } from "../../utils/get-data-from-html";
 
@@ -17,7 +17,7 @@ export const GET: APIRoute = async ({ params }) => {
       );
     }
 
-    if (invalidDomains.includes(domain)) {
+    if (INVALID_DOMAINS.includes(domain)) {
       return new Response(
         JSON.stringify({ status: "fail", error: "Invalid domain" }),
         {
@@ -37,7 +37,11 @@ export const GET: APIRoute = async ({ params }) => {
       );
     }
 
-    const domainResponse = await fetch(`https://${domain}`);
+    const domainResponse = await fetch(`https://${domain}`, {
+      headers: {
+        "User-Agent": USER_AGENT,
+      },
+    });
     const domainBody = await domainResponse.text();
 
     const metadata = await getDataFromHtml(domainBody, domain);

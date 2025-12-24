@@ -1,5 +1,9 @@
 import type { APIRoute } from "astro";
-import { invalidDomains, twitterImageElements } from "../../utils/constants";
+import {
+  INVALID_DOMAINS,
+  TWITTER_IMAGE_ELEMENTS,
+  USER_AGENT,
+} from "../../utils/constants";
 import { isValidDomain } from "../../utils/is-valid-domain";
 import * as cheerio from "cheerio";
 
@@ -18,7 +22,7 @@ export const GET: APIRoute = async ({ params }) => {
       );
     }
 
-    if (invalidDomains.includes(domain)) {
+    if (INVALID_DOMAINS.includes(domain)) {
       return new Response(
         JSON.stringify({ status: "fail", error: "Invalid domain" }),
         {
@@ -38,11 +42,15 @@ export const GET: APIRoute = async ({ params }) => {
       );
     }
 
-    const domainResponse = await fetch(`https://${domain}`);
+    const domainResponse = await fetch(`https://${domain}`, {
+      headers: {
+        "User-Agent": USER_AGENT,
+      },
+    });
     const domainBody = await domainResponse.text();
     const cheerioData = cheerio.load(domainBody);
 
-    for (const selector of twitterImageElements) {
+    for (const selector of TWITTER_IMAGE_ELEMENTS) {
       const href = cheerioData(selector).attr("content");
       if (href) {
         twitterImage = href;
@@ -57,11 +65,18 @@ export const GET: APIRoute = async ({ params }) => {
       });
     }
 
-    const imageResponse = await fetch(twitterImage);
-    const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
+    const imageResponse = await fetch(twitterImage, {
+      headers: {
+        "User-Agent": USER_AGENT,
+      },
+    });
+    const imageBuffer = await imageResponse.arrayBuffer();
+
+    const contentType =
+      imageResponse.headers.get("content-type") ?? "image/png";
 
     return new Response(imageBuffer, {
-      headers: { "Content-Type": "image/png" },
+      headers: { "Content-Type": contentType },
       status: 200,
     });
   } catch (error) {
