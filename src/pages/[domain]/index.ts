@@ -6,7 +6,7 @@ import { cloudflareBrowserRendering } from "../../utils/cloudflare-browser-rende
 import { doesMetadataHaveNull } from "../../utils/does-metadata-have-null-values";
 import { mergeMetadata } from "../../utils/merge-metadata";
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ params, locals }) => {
   try {
     const domain = params.domain!;
 
@@ -21,7 +21,11 @@ export const GET: APIRoute = async ({ params }) => {
     // If metadata is incomplete, try Cloudflare Browser Rendering
     if (doesMetadataHaveNull(metadata)) {
       console.log("Trying Cloudflare Browser Rendering");
-      const browserRenderingResult = await cloudflareBrowserRendering(domain);
+      const browserRenderingResult = await cloudflareBrowserRendering(
+        domain,
+        // @ts-ignore
+        locals?.runtime?.env
+      );
 
       if (browserRenderingResult) {
         const browserMetadata = await getDataFromHtml(

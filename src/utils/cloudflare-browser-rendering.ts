@@ -1,9 +1,10 @@
 import Cloudflare from "cloudflare";
+import type { Env } from "../types";
 
-export const cloudflareBrowserRendering = async (domain: string) => {
+export const cloudflareBrowserRendering = async (domain: string, env: Env) => {
   try {
-    const CLOUDFLARE_ACCOUNT_ID = import.meta.env.CLOUDFLARE_ACCOUNT_ID;
-    const CLOUDFLARE_API_TOKEN = import.meta.env.CLOUDFLARE_API_TOKEN;
+    const CLOUDFLARE_ACCOUNT_ID = env?.CLOUDFLARE_ACCOUNT_ID;
+    const CLOUDFLARE_API_TOKEN = env?.CLOUDFLARE_API_TOKEN;
 
     if (!CLOUDFLARE_ACCOUNT_ID || !CLOUDFLARE_API_TOKEN) {
       throw new Error("Missing env");
