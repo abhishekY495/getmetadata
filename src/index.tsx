@@ -2,15 +2,19 @@ import { Hono } from "hono";
 import { layout } from "./layout";
 import { Home } from "./pages/home";
 import { NotFound } from "./components/not-found";
-import { fetchWithTimeout } from "./utils/fetch-with-timeout";
-import { getDataFromHtml } from "./utils/get-data-from-html";
 import { middleware } from "./utils/middleware";
+import { handleMetadataRequest } from "./lib/handle-metadata-request";
+import { handleIconRequest } from "./lib/handle-icon-request";
+import { handleOgRequest } from "./lib/handler-og-request";
 
 const app = new Hono();
 
 app.use(layout);
 
 app.use(":domain", middleware);
+app.use(":domain/icon", middleware);
+app.use(":domain/og", middleware);
+app.use(":domain/twitterog", middleware);
 
 app.notFound((c) => {
   return c.render(<NotFound />);
@@ -20,36 +24,9 @@ app.get("/", (c) => {
   return c.render(<Home />);
 });
 
-app.get(":domain", async (c) => {
-  try {
-    const domain = c.req.param("domain");
-
-    const domainResponse = await fetchWithTimeout(`https://${domain}`);
-    const domainBody = await domainResponse.text();
-
-    const data = await getDataFromHtml(domainBody, domain);
-
-    return c.json({ status: "success", data }, 200, {
-      "Content-Type": "application/json",
-    });
-  } catch (error) {
-    console.error(error as Error);
-
-    if ((error as Error).name === "AbortError") {
-      return c.json(
-        { status: "error", error: "Took too long to respond" },
-        504
-      );
-    }
-
-    return c.json(
-      {
-        status: "error",
-        error: (error as Error).message ?? "Internal server error",
-      },
-      500
-    );
-  }
-});
+app.get(":domain", handleMetadataRequest);
+app.get(":domain/icon", handleIconRequest);
+app.get(":domain/og", (c) => handleOgRequest(c));
+app.get(":domain/twitterog", (c) => handleOgRequest(c, true));
 
 export default app;
