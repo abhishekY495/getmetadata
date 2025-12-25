@@ -1,12 +1,18 @@
 import { Hono } from "hono";
-import { renderer } from "./renderer";
+import { layout } from "./layout";
+import { Home } from "./pages/home";
+import { NotFound } from "./components/not-found";
 
 const app = new Hono();
 
-app.use(renderer);
+app.use(layout);
 
 app.get("/", (c) => {
-  return c.render(<h1>Hello!</h1>);
+  return c.render(<Home />);
+});
+
+app.notFound((c) => {
+  return c.render(<NotFound />);
 });
 
 export default app;
