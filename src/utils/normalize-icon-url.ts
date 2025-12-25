@@ -3,6 +3,10 @@ export const normalizeIconUrl = (iconUrl: string, domain: string): string => {
     return iconUrl;
   }
 
+  if (iconUrl.startsWith("//")) {
+    return `https:${iconUrl}`;
+  }
+
   if (iconUrl.startsWith("/")) {
     return `https://${domain}${iconUrl}`;
   }
