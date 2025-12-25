@@ -2,33 +2,29 @@ import { Hono } from "hono";
 import { layout } from "./layout";
 import { Home } from "./pages/home";
 import { NotFound } from "./components/not-found";
-import { isValidURL } from "./utils/is-valid-url";
 import { fetchWithTimeout } from "./utils/fetch-with-timeout";
 import { getDataFromHtml } from "./utils/get-data-from-html";
+import { middleware } from "./utils/middleware";
 
 const app = new Hono();
 
 app.use(layout);
 
-app.get("/", (c) => {
-  return c.render(<Home />);
-});
+app.use(":domain", middleware);
 
 app.notFound((c) => {
   return c.render(<NotFound />);
+});
+
+app.get("/", (c) => {
+  return c.render(<Home />);
 });
 
 app.get(":domain", async (c) => {
   try {
     const domain = c.req.param("domain");
 
-    const domainUrl = `https://${domain}`;
-
-    if (!isValidURL(domainUrl)) {
-      return c.json({ status: "error", error: "Invalid domain" }, 400);
-    }
-
-    const domainResponse = await fetchWithTimeout(domainUrl);
+    const domainResponse = await fetchWithTimeout(`https://${domain}`);
     const domainBody = await domainResponse.text();
 
     const data = await getDataFromHtml(domainBody, domain);
