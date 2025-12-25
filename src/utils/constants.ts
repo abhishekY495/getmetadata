@@ -45,7 +45,3 @@ export const USER_AGENT = "GetMetaDataBot/1.0 (https://getmetadata.pages.dev)";
 
 export const FALLBACK_OG_IMAGE_URL =
   "https://getmetadata.pages.dev/og-image.png";
-
-// Rate Limiting
-export const RATE_LIMIT_MAX_REQUESTS = 5;
-export const RATE_LIMIT_WINDOW_SECONDS = 60;
