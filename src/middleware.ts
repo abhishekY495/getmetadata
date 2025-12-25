@@ -15,6 +15,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // @ts-ignore
     const rateLimiter = context.locals.runtime?.env?.RATE_LIMITER;
 
+    console.log(123, rateLimiter);
+
     if (!rateLimiter) {
       return new Response(
         JSON.stringify({
