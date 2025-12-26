@@ -20,6 +20,12 @@ export const handleOgRequest = async (
   let ogImage = null;
 
   try {
+    if (fallback) {
+      if (!isValidURL(fallback)) {
+        return c.json({ status: "error", error: "Invalid fallback URL" }, 400);
+      }
+    }
+
     const domainResponse = await fetchWithTimeout(domainUrl);
     const domainBody = await domainResponse.text();
 
@@ -36,31 +42,23 @@ export const handleOgRequest = async (
 
     if (!ogImage) {
       if (fallback) {
-        if (!isValidURL(fallback)) {
+        const fallbackResponse = await fetchWithTimeout(fallback);
+        const contentType = fallbackResponse.headers.get("content-type") ?? "";
+
+        if (!contentType.startsWith("image/")) {
           return c.json(
-            { status: "error", error: "Invalid fallback URL" },
+            {
+              status: "error",
+              error: "Invalid fallback URL (must be an image)",
+            },
             400
           );
-        } else {
-          const fallbackResponse = await fetchWithTimeout(fallback);
-          const contentType =
-            fallbackResponse.headers.get("content-type") ?? "";
-
-          if (!contentType.startsWith("image/")) {
-            return c.json(
-              {
-                status: "error",
-                error: "Invalid fallback URL (must be an image)",
-              },
-              400
-            );
-          }
-
-          const fallbackBuffer = await fallbackResponse.arrayBuffer();
-          return c.body(fallbackBuffer, 200, {
-            "Content-Type": contentType,
-          });
         }
+
+        const fallbackBuffer = await fallbackResponse.arrayBuffer();
+        return c.body(fallbackBuffer, 200, {
+          "Content-Type": contentType,
+        });
       }
       const defaultOgImage = await fetchDefaultOgImage();
       if (defaultOgImage) {
