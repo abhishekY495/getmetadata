@@ -11,11 +11,6 @@ const app = new Hono();
 
 app.use(layout);
 
-app.use(":domain", middleware);
-app.use(":domain/icon", middleware);
-app.use(":domain/og", middleware);
-app.use(":domain/twitterog", middleware);
-
 app.notFound((c) => {
   return c.render(<NotFound />);
 });
@@ -23,6 +18,11 @@ app.notFound((c) => {
 app.get("/", (c) => {
   return c.render(<Home />);
 });
+
+app.use(":domain", middleware);
+app.use(":domain/icon", middleware);
+app.use(":domain/og", middleware);
+app.use(":domain/twitterog", middleware);
 
 app.get(":domain", handleMetadataRequest);
 app.get(":domain/icon", handleIconRequest);
