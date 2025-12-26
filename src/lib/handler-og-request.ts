@@ -7,12 +7,15 @@ import {
 import { fetchWithTimeout } from "../utils/fetch-with-timeout";
 import * as cheerio from "cheerio";
 import { fetchDefaultOgImage } from "../utils/fetch-default-og-image";
+import { isValidURL } from "../utils/is-valid-url";
 
 export const handleOgRequest = async (
   c: Context,
   isTwitterOg: boolean = false
 ) => {
   const domain = c.req.param("domain");
+  const fallback = c.req.query("fallback") ?? false;
+
   const domainUrl = `https://${domain}`;
   let ogImage = null;
 
@@ -32,6 +35,33 @@ export const handleOgRequest = async (
     }
 
     if (!ogImage) {
+      if (fallback) {
+        if (!isValidURL(fallback)) {
+          return c.json(
+            { status: "error", error: "Invalid fallback URL" },
+            400
+          );
+        } else {
+          const fallbackResponse = await fetchWithTimeout(fallback);
+          const contentType =
+            fallbackResponse.headers.get("content-type") ?? "";
+
+          if (!contentType.startsWith("image/")) {
+            return c.json(
+              {
+                status: "error",
+                error: "Invalid fallback URL (must be an image)",
+              },
+              400
+            );
+          }
+
+          const fallbackBuffer = await fallbackResponse.arrayBuffer();
+          return c.body(fallbackBuffer, 200, {
+            "Content-Type": contentType,
+          });
+        }
+      }
       const defaultOgImage = await fetchDefaultOgImage();
       if (defaultOgImage) {
         return c.body(defaultOgImage, 200, {
@@ -50,6 +80,13 @@ export const handleOgRequest = async (
       "Content-Type": contentType,
     });
   } catch (error) {
+    if ((error as Error).name === "AbortError") {
+      return c.json(
+        { status: "error", error: "Took too long to respond" },
+        504
+      );
+    }
+
     const defaultOgImage = await fetchDefaultOgImage();
     if (defaultOgImage) {
       return c.body(defaultOgImage, 200, {
