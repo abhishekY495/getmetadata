@@ -1,10 +1,10 @@
-import { fetchWithTimeout } from "./fetch-with-timeout";
-import { SITE_OG_IMAGE } from "../constants";
+import defaultOgImage from "../../public/og-image.png";
 
-export const fetchDefaultOgImage = async () => {
+export const fetchDefaultOgImage = async (baseUrl: string) => {
   try {
-    console.log("Fetching default og image", SITE_OG_IMAGE);
-    const defaultOgImageResponse = await fetchWithTimeout(SITE_OG_IMAGE);
+    const url = new URL(defaultOgImage, baseUrl);
+    console.log("Fetching default og image", url.toString());
+    const defaultOgImageResponse = await fetch(url.toString());
     const defaultOgImageBuffer = await defaultOgImageResponse.arrayBuffer();
     return defaultOgImageBuffer;
   } catch (error) {
