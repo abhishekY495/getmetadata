@@ -15,4 +15,5 @@ export type Metadata = {
 export type Bindings = {
   CLOUDFLARE_ACCOUNT_ID: string;
   CLOUDFLARE_API_TOKEN: string;
+  RATE_LIMITER: any;
 };
