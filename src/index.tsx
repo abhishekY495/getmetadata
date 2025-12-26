@@ -2,10 +2,10 @@ import { Hono } from "hono";
 import { layout } from "./layout";
 import { Home } from "./pages/home";
 import { NotFound } from "./components/not-found";
-import { middleware } from "./utils/middleware";
 import { handleMetadataRequest } from "./lib/handle-metadata-request";
 import { handleIconRequest } from "./lib/handle-icon-request";
 import { handleOgRequest } from "./lib/handler-og-request";
+import { middleware } from "./lib/middleware";
 
 const app = new Hono();
 

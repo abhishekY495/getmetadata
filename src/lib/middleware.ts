@@ -1,5 +1,5 @@
 import { Context, Next } from "hono";
-import { isValidURL } from "./is-valid-url";
+import { isValidURL } from "../utils/is-valid-url";
 
 export const middleware = async (c: Context, next: Next) => {
   const domain = c.req.param("domain");
