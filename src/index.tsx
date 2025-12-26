@@ -6,8 +6,9 @@ import { handleMetadataRequest } from "./lib/handle-metadata-request";
 import { handleIconRequest } from "./lib/handle-icon-request";
 import { handleOgRequest } from "./lib/handler-og-request";
 import { middleware } from "./lib/middleware";
+import { Bindings } from "../types";
 
-const app = new Hono();
+const app = new Hono<{ Bindings: Bindings }>();
 
 app.use(layout);
 

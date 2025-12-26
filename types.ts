@@ -11,3 +11,8 @@ export type Metadata = {
     twitterImage: string | null;
   };
 };
+
+export type Bindings = {
+  CLOUDFLARE_ACCOUNT_ID: string;
+  CLOUDFLARE_API_TOKEN: string;
+};

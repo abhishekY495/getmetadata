@@ -1,17 +1,38 @@
 import { Context } from "hono";
 import { fetchWithTimeout } from "../utils/fetch-with-timeout";
 import { getDataFromHtml } from "../utils/get-data-from-html";
+import { doesMetadataHaveNull } from "../utils/does-metadata-have-null-values";
+import { fetchFromCfBrowserRendering } from "../utils/fetch-from-cf-browser-rendering";
+import { mergeMetadata } from "../utils/merge-metadata";
 
 export const handleMetadataRequest = async (c: Context) => {
   try {
     const domain = c.req.param("domain");
+    const domainUrl = `https://${domain}`;
+    let metadata = null;
 
-    const domainResponse = await fetchWithTimeout(`https://${domain}`);
+    const domainResponse = await fetchWithTimeout(domainUrl);
     const domainBody = await domainResponse.text();
 
-    const data = await getDataFromHtml(domainBody, domain);
+    metadata = await getDataFromHtml(domainBody, domain);
 
-    return c.json({ status: "success", data }, 200, {
+    // if metadata has null values, use Cloudflare Browser Rendering
+    if (doesMetadataHaveNull(metadata)) {
+      console.log("Using Cloudflare Browser Rendering");
+      const CLOUDFLARE_API_TOKEN = c.env.CLOUDFLARE_API_TOKEN;
+      const CLOUDFLARE_ACCOUNT_ID = c.env.CLOUDFLARE_ACCOUNT_ID;
+      const content = await fetchFromCfBrowserRendering(
+        domainUrl,
+        CLOUDFLARE_API_TOKEN,
+        CLOUDFLARE_ACCOUNT_ID
+      );
+      if (content) {
+        const cfMetadata = await getDataFromHtml(content, domain);
+        metadata = mergeMetadata(metadata, cfMetadata);
+      }
+    }
+
+    return c.json({ status: "success", metadata }, 200, {
       "Content-Type": "application/json",
     });
   } catch (error) {
