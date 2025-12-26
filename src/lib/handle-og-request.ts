@@ -17,7 +17,7 @@ export const handleOgRequest = async (
   const fallback = c.req.query("fallback") ?? false;
 
   const domainUrl = `https://${domain}`;
-  let ogImageUrl = null;
+  let ogImage = null;
 
   try {
     if (fallback) {
@@ -37,12 +37,12 @@ export const handleOgRequest = async (
       : OG_IMAGE_ELEMENTS) {
       const href = $(selector).attr("content");
       if (href) {
-        ogImageUrl = href;
+        ogImage = href;
         break;
       }
     }
 
-    if (!ogImageUrl) {
+    if (!ogImage) {
       console.log("No og image found");
       if (fallback) {
         console.log("Using fallback URL");
@@ -69,18 +69,22 @@ export const handleOgRequest = async (
       }
 
       console.log("No fallback URL, using default og image");
-      const defaultOgImage = await fetchDefaultOgImage(c.req.url);
+      const defaultOgImage = await fetchDefaultOgImage();
       if (defaultOgImage) {
+        console.log("Default og image found");
         return c.body(defaultOgImage, 200, {
           "Content-Type": "image/png",
         });
       } else {
+        console.log(
+          "No default og image found, redirecting to default og image"
+        );
         return c.redirect(SITE_OG_IMAGE, 302);
       }
     }
 
     console.log("Using og image");
-    const ogImageResponse = await fetchWithTimeout(ogImageUrl);
+    const ogImageResponse = await fetchWithTimeout(ogImage);
     const ogImageBuffer = await ogImageResponse.arrayBuffer();
     const contentType =
       ogImageResponse.headers.get("content-type") ?? "image/png";
@@ -120,12 +124,16 @@ export const handleOgRequest = async (
       });
     } else {
       console.log("error - No fallback URL, using default og image");
-      const defaultOgImage = await fetchDefaultOgImage(c.req.url);
+      const defaultOgImage = await fetchDefaultOgImage();
       if (defaultOgImage) {
+        console.log("error - Default og image found");
         return c.body(defaultOgImage, 200, {
           "Content-Type": "image/png",
         });
       } else {
+        console.log(
+          "error - No default og image found, redirecting to default og image"
+        );
         return c.redirect(SITE_OG_IMAGE, 302);
       }
     }
