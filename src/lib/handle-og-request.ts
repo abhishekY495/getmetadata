@@ -1,13 +1,13 @@
 import { Context } from "hono";
 import {
+  OG_IMAGE_BUFFER,
   OG_IMAGE_ELEMENTS,
-  SITE_OG_IMAGE,
   TWITTER_IMAGE_ELEMENTS,
 } from "../constants";
 import { fetchWithTimeout } from "../utils/fetch-with-timeout";
 import * as cheerio from "cheerio";
-import { fetchDefaultOgImage } from "../utils/fetch-default-og-image";
 import { isValidURL } from "../utils/is-valid-url";
+import { base64ToArrayBuffer } from "../utils/base64-to-arraybuffer";
 
 export const handleOgRequest = async (
   c: Context,
@@ -69,18 +69,9 @@ export const handleOgRequest = async (
       }
 
       console.log("No fallback URL, using default og image");
-      const defaultOgImage = await fetchDefaultOgImage();
-      if (defaultOgImage) {
-        console.log("Default og image found");
-        return c.body(defaultOgImage, 200, {
-          "Content-Type": "image/png",
-        });
-      } else {
-        console.log(
-          "No default og image found, redirecting to default og image"
-        );
-        return c.redirect(SITE_OG_IMAGE, 302);
-      }
+      return c.body(base64ToArrayBuffer(OG_IMAGE_BUFFER), 200, {
+        "Content-Type": "image/png",
+      });
     }
 
     console.log("Using og image");
@@ -124,18 +115,9 @@ export const handleOgRequest = async (
       });
     } else {
       console.log("error - No fallback URL, using default og image");
-      const defaultOgImage = await fetchDefaultOgImage();
-      if (defaultOgImage) {
-        console.log("error - Default og image found");
-        return c.body(defaultOgImage, 200, {
-          "Content-Type": "image/png",
-        });
-      } else {
-        console.log(
-          "error - No default og image found, redirecting to default og image"
-        );
-        return c.redirect(SITE_OG_IMAGE, 302);
-      }
+      return c.body(base64ToArrayBuffer(OG_IMAGE_BUFFER), 200, {
+        "Content-Type": "image/png",
+      });
     }
   }
 };
