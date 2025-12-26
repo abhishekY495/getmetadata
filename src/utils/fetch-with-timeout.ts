@@ -1,7 +1,9 @@
+import { FETCH_TIMEOUT_MS, USER_AGENT } from "../constants";
+
 export const fetchWithTimeout = async (
   url: string,
   options: RequestInit = {},
-  timeoutMs: number = 10000
+  timeoutMs: number = FETCH_TIMEOUT_MS
 ): Promise<Response> => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -10,6 +12,9 @@ export const fetchWithTimeout = async (
     const response = await fetch(url, {
       ...options,
       signal: controller.signal,
+      headers: {
+        "User-Agent": USER_AGENT,
+      },
     });
     clearTimeout(timeoutId);
     return response;

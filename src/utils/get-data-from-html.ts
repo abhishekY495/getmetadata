@@ -1,5 +1,4 @@
-import * as cheerio from "cheerio";
-import type { Metadata } from "../types";
+import { Metadata } from "../../types";
 import {
   DESCRIPTION_ELEMENTS,
   ICON_ELEMENTS,
@@ -10,14 +9,15 @@ import {
   TWITTER_DESCRIPTION_ELEMENTS,
   TWITTER_IMAGE_ELEMENTS,
   TWITTER_TITLE_ELEMENTS,
-} from "./constants";
+} from "../constants";
 import { normalizeIconUrl } from "./normalize-icon-url";
+import * as cheerio from "cheerio";
 
 export const getDataFromHtml = async (
   html: string,
   domain: string
 ): Promise<Metadata> => {
-  const cheerioData = cheerio.load(html);
+  const $ = cheerio.load(html);
 
   let title = null;
   let description = null;
@@ -30,21 +30,21 @@ export const getDataFromHtml = async (
   let twitterImage = null;
 
   for (const selector of TITLE_ELEMENTS) {
-    const text = cheerioData(selector).text();
+    const text = $(selector).text();
     if (text) {
       title = text;
       break;
     }
   }
   for (const selector of DESCRIPTION_ELEMENTS) {
-    const text = cheerioData(selector).attr("content");
+    const text = $(selector).attr("content");
     if (text) {
       description = text;
       break;
     }
   }
   for (const selector of ICON_ELEMENTS) {
-    const href = cheerioData(selector).attr("href");
+    const href = $(selector).attr("href");
     if (href) {
       icon = normalizeIconUrl(href, domain);
       break;
@@ -52,21 +52,21 @@ export const getDataFromHtml = async (
   }
 
   for (const selector of OG_TITLE_ELEMENTS) {
-    const text = cheerioData(selector).attr("content");
+    const text = $(selector).attr("content");
     if (text) {
       ogTitle = text;
       break;
     }
   }
   for (const selector of OG_DESCRIPTION_ELEMENTS) {
-    const text = cheerioData(selector).attr("content");
+    const text = $(selector).attr("content");
     if (text) {
       ogDescription = text;
       break;
     }
   }
   for (const selector of OG_IMAGE_ELEMENTS) {
-    const text = cheerioData(selector).attr("content");
+    const text = $(selector).attr("content");
     if (text) {
       ogImage = text;
       break;
@@ -74,21 +74,21 @@ export const getDataFromHtml = async (
   }
 
   for (const selector of TWITTER_TITLE_ELEMENTS) {
-    const text = cheerioData(selector).attr("content");
+    const text = $(selector).attr("content");
     if (text) {
       twitterTitle = text;
       break;
     }
   }
   for (const selector of TWITTER_DESCRIPTION_ELEMENTS) {
-    const text = cheerioData(selector).attr("content");
+    const text = $(selector).attr("content");
     if (text) {
       twitterDescription = text;
       break;
     }
   }
   for (const selector of TWITTER_IMAGE_ELEMENTS) {
-    const text = cheerioData(selector).attr("content");
+    const text = $(selector).attr("content");
     if (text) {
       twitterImage = text;
       break;

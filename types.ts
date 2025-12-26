@@ -11,8 +11,3 @@ export type Metadata = {
     twitterImage: string | null;
   };
 };
-
-export type Env = {
-  CLOUDFLARE_ACCOUNT_ID: string;
-  CLOUDFLARE_API_TOKEN: string;
-};

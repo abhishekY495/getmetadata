@@ -1,11 +1,11 @@
-export const isValidDomain = (domain: string) => {
+export const isValidURL = (string: string) => {
   try {
     let url: URL;
 
-    if (domain.startsWith("https://")) {
-      url = new URL(domain);
+    if (string.startsWith("https://")) {
+      url = new URL(string);
     } else {
-      url = new URL(`https://${domain}`);
+      url = new URL(`https://${string}`);
     }
 
     // Must have at least one dot
@@ -16,7 +16,7 @@ export const isValidDomain = (domain: string) => {
       return false;
 
     // No spaces
-    if (/\s/.test(domain)) return false;
+    if (/\s/.test(string)) return false;
 
     return true;
   } catch {
