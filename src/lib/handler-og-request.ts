@@ -85,13 +85,33 @@ export const handleOgRequest = async (
       );
     }
 
-    const defaultOgImage = await fetchDefaultOgImage();
-    if (defaultOgImage) {
-      return c.body(defaultOgImage, 200, {
-        "Content-Type": "image/png",
+    if (fallback) {
+      const fallbackResponse = await fetchWithTimeout(fallback);
+      const contentType = fallbackResponse.headers.get("content-type") ?? "";
+
+      if (!contentType.startsWith("image/")) {
+        return c.json(
+          {
+            status: "error",
+            error: "Invalid fallback URL (must be an image)",
+          },
+          400
+        );
+      }
+
+      const fallbackBuffer = await fallbackResponse.arrayBuffer();
+      return c.body(fallbackBuffer, 200, {
+        "Content-Type": contentType,
       });
     } else {
-      return c.redirect(SITE_OG_IMAGE, 302);
+      const defaultOgImage = await fetchDefaultOgImage();
+      if (defaultOgImage) {
+        return c.body(defaultOgImage, 200, {
+          "Content-Type": "image/png",
+        });
+      } else {
+        return c.redirect(SITE_OG_IMAGE, 302);
+      }
     }
   }
 };
