@@ -1,4 +1,4 @@
-import { FETCH_TIMEOUT_MS, USER_AGENT } from "../constants";
+import { FETCH_TIMEOUT_MS, USER_AGENT } from "./constants";
 
 export const fetchWithTimeout = async (
   url: string,

@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { fetchWithTimeout } from "../utils/fetch-with-timeout";
-import { ICON_BUFFER, ICON_ELEMENTS } from "../constants";
+import { ICON_BUFFER, ICON_ELEMENTS } from "../utils/constants";
 import * as cheerio from "cheerio";
 import { normalizeIconUrl } from "../utils/normalize-icon-url";
 import { fetchGoogleFavicon } from "../utils/fetch-google-favicon";

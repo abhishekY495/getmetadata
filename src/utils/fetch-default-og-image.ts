@@ -1,5 +1,5 @@
 import { fetchWithTimeout } from "./fetch-with-timeout";
-import { SITE_OG_IMAGE } from "../constants";
+import { SITE_OG_IMAGE } from "./constants";
 
 export const fetchDefaultOgImage = async () => {
   try {

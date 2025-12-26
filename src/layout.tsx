@@ -5,7 +5,7 @@ import {
   SITE_NAME,
   SITE_OG_IMAGE,
   SITE_URL,
-} from "./constants";
+} from "./utils/constants";
 
 export const layout = jsxRenderer(({ children }) => {
   return (

@@ -3,7 +3,7 @@ import {
   OG_IMAGE_BUFFER,
   OG_IMAGE_ELEMENTS,
   TWITTER_IMAGE_ELEMENTS,
-} from "../constants";
+} from "../utils/constants";
 import { fetchWithTimeout } from "../utils/fetch-with-timeout";
 import * as cheerio from "cheerio";
 import { isValidURL } from "../utils/is-valid-url";

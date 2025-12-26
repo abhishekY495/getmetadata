@@ -9,7 +9,7 @@ import {
   TWITTER_DESCRIPTION_ELEMENTS,
   TWITTER_IMAGE_ELEMENTS,
   TWITTER_TITLE_ELEMENTS,
-} from "../constants";
+} from "./constants";
 import { normalizeIconUrl } from "./normalize-icon-url";
 import * as cheerio from "cheerio";
 
