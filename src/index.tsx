@@ -4,7 +4,7 @@ import { Home } from "./pages/home";
 import { NotFound } from "./components/not-found";
 import { handleMetadataRequest } from "./lib/handle-metadata-request";
 import { handleIconRequest } from "./lib/handle-icon-request";
-import { handleOgRequest } from "./lib/handler-og-request";
+import { handleOgRequest } from "./lib/handle-og-request";
 import { middleware } from "./lib/middleware";
 import { Bindings } from "../types";
 

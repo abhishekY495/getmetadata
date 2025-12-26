@@ -47,7 +47,8 @@ export const handleOgRequest = async (
       if (fallback) {
         console.log("Using fallback URL");
         const fallbackResponse = await fetchWithTimeout(fallback);
-        const contentType = fallbackResponse.headers.get("content-type") ?? "";
+        const contentType =
+          fallbackResponse.headers.get("content-type") ?? "image/png";
 
         if (!contentType.startsWith("image/")) {
           console.log("Fallback URL is not an image");
@@ -102,7 +103,8 @@ export const handleOgRequest = async (
     if (fallback) {
       console.log("error - Using fallback URL");
       const fallbackResponse = await fetchWithTimeout(fallback);
-      const contentType = fallbackResponse.headers.get("content-type") ?? "";
+      const contentType =
+        fallbackResponse.headers.get("content-type") ?? "image/png";
 
       if (!contentType.startsWith("image/")) {
         console.log("error - Fallback URL is not an image");
