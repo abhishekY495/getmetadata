@@ -72,6 +72,7 @@ export const handleOgRequest = async (
       const defaultOgImage = await fetchDefaultOgImage();
       if (defaultOgImage) {
         console.log("Default og image found");
+        console.log(defaultOgImage);
         return c.body(defaultOgImage, 200, {
           "Content-Type": "image/png",
         });
