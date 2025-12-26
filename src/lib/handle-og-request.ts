@@ -22,10 +22,8 @@ export const handleOgRequest = async (
   try {
     if (fallback) {
       if (!isValidURL(fallback)) {
-        console.log("Fallback URL is invalid");
         return c.json({ status: "error", error: "Invalid fallback URL" }, 400);
       }
-      console.log("Fallback URL is valid");
     }
 
     const domainResponse = await fetchWithTimeout(domainUrl);
@@ -43,15 +41,12 @@ export const handleOgRequest = async (
     }
 
     if (!ogImage) {
-      console.log("No og image found");
       if (fallback) {
-        console.log("Using fallback URL");
         const fallbackResponse = await fetchWithTimeout(fallback);
         const contentType =
           fallbackResponse.headers.get("content-type") ?? "image/png";
 
         if (!contentType.startsWith("image/")) {
-          console.log("Fallback URL is not an image");
           return c.json(
             {
               status: "error",
@@ -61,20 +56,17 @@ export const handleOgRequest = async (
           );
         }
 
-        console.log("Using fallback URL");
         const fallbackBuffer = await fallbackResponse.arrayBuffer();
         return c.body(fallbackBuffer, 200, {
           "Content-Type": contentType,
         });
       }
 
-      console.log("No fallback URL, using default og image");
       return c.body(base64ToArrayBuffer(OG_IMAGE_BUFFER), 200, {
         "Content-Type": "image/png",
       });
     }
 
-    console.log("Using og image");
     const ogImageResponse = await fetchWithTimeout(ogImage);
     const ogImageBuffer = await ogImageResponse.arrayBuffer();
     const contentType =
@@ -83,7 +75,6 @@ export const handleOgRequest = async (
       "Content-Type": contentType,
     });
   } catch (error) {
-    console.log("Error fetching og image");
     if ((error as Error).name === "AbortError") {
       return c.json(
         { status: "error", error: "Took too long to respond" },
@@ -92,13 +83,11 @@ export const handleOgRequest = async (
     }
 
     if (fallback) {
-      console.log("error - Using fallback URL");
       const fallbackResponse = await fetchWithTimeout(fallback);
       const contentType =
         fallbackResponse.headers.get("content-type") ?? "image/png";
 
       if (!contentType.startsWith("image/")) {
-        console.log("error - Fallback URL is not an image");
         return c.json(
           {
             status: "error",
@@ -108,13 +97,11 @@ export const handleOgRequest = async (
         );
       }
 
-      console.log("error - Using fallback URL");
       const fallbackBuffer = await fallbackResponse.arrayBuffer();
       return c.body(fallbackBuffer, 200, {
         "Content-Type": contentType,
       });
     } else {
-      console.log("error - No fallback URL, using default og image");
       return c.body(base64ToArrayBuffer(OG_IMAGE_BUFFER), 200, {
         "Content-Type": "image/png",
       });

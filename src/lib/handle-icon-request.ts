@@ -1,9 +1,10 @@
 import { Context } from "hono";
 import { fetchWithTimeout } from "../utils/fetch-with-timeout";
-import { ICON_ELEMENTS, SITE_ICON } from "../constants";
+import { ICON_BUFFER, ICON_ELEMENTS } from "../constants";
 import * as cheerio from "cheerio";
 import { normalizeIconUrl } from "../utils/normalize-icon-url";
 import { fetchGoogleFavicon } from "../utils/fetch-google-favicon";
+import { base64ToArrayBuffer } from "../utils/base64-to-arraybuffer";
 
 export const handleIconRequest = async (c: Context) => {
   const domain = c.req.param("domain");
@@ -30,7 +31,9 @@ export const handleIconRequest = async (c: Context) => {
           "Content-Type": googleFavicon.googleFaviconContentType,
         });
       } else {
-        return c.redirect(SITE_ICON, 302);
+        return c.body(base64ToArrayBuffer(ICON_BUFFER), 200, {
+          "Content-Type": "image/png",
+        });
       }
     }
 
@@ -43,13 +46,8 @@ export const handleIconRequest = async (c: Context) => {
       "Content-Type": contentType,
     });
   } catch (error) {
-    const googleFavicon = await fetchGoogleFavicon(domain);
-    if (googleFavicon) {
-      return c.body(googleFavicon.googleFaviconBuffer, 200, {
-        "Content-Type": googleFavicon.googleFaviconContentType,
-      });
-    } else {
-      return c.redirect(SITE_ICON, 302);
-    }
+    return c.body(base64ToArrayBuffer(ICON_BUFFER), 200, {
+      "Content-Type": "image/png",
+    });
   }
 };
