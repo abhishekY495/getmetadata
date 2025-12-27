@@ -68,7 +68,7 @@ export const getDataFromHtml = async (
   for (const selector of OG_IMAGE_ELEMENTS) {
     const text = $(selector).attr("content");
     if (text) {
-      ogImage = text;
+      ogImage = normalizeIconUrl(text, domain);
       break;
     }
   }
@@ -90,7 +90,7 @@ export const getDataFromHtml = async (
   for (const selector of TWITTER_IMAGE_ELEMENTS) {
     const text = $(selector).attr("content");
     if (text) {
-      twitterImage = text;
+      twitterImage = normalizeIconUrl(text, domain);
       break;
     }
   }

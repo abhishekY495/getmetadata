@@ -8,6 +8,7 @@ import { fetchWithTimeout } from "../utils/fetch-with-timeout";
 import * as cheerio from "cheerio";
 import { isValidURL } from "../utils/is-valid-url";
 import { base64ToArrayBuffer } from "../utils/base64-to-arraybuffer";
+import { normalizeIconUrl } from "../utils/normalize-icon-url";
 
 export const handleOgRequest = async (
   c: Context,
@@ -67,7 +68,8 @@ export const handleOgRequest = async (
       });
     }
 
-    const ogImageResponse = await fetchWithTimeout(ogImage);
+    const ogImageUrl = normalizeIconUrl(ogImage, domain);
+    const ogImageResponse = await fetchWithTimeout(ogImageUrl);
     const ogImageBuffer = await ogImageResponse.arrayBuffer();
     const contentType =
       ogImageResponse.headers.get("content-type") ?? "image/png";
