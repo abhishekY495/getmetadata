@@ -6,6 +6,8 @@ import { handleMetadataRequest } from "./lib/handle-metadata-request";
 import { handleIconRequest } from "./lib/handle-icon-request";
 import { handleOgRequest } from "./lib/handle-og-request";
 import { middleware } from "./lib/middleware";
+import { cache } from "hono/cache";
+import { CACHE_MAX_AGE, CACHE_VERSION } from "./utils/constants";
 
 const app = new Hono<{ Bindings: CloudflareBindings }>();
 
@@ -19,14 +21,44 @@ app.get("/", (c) => {
   return c.render(<Home />);
 });
 
-app.use(":domain", middleware);
-app.use(":domain/icon", middleware);
-app.use(":domain/og", middleware);
-app.use(":domain/twitterog", middleware);
+app.use(
+  ":domain",
+  middleware,
+  cache({
+    cacheName: `metadata-${CACHE_VERSION}`,
+    cacheControl: `max-age=${CACHE_MAX_AGE}`,
+  }),
+  handleMetadataRequest
+);
 
-app.get(":domain", handleMetadataRequest);
-app.get(":domain/icon", handleIconRequest);
-app.get(":domain/og", (c) => handleOgRequest(c));
-app.get(":domain/twitterog", (c) => handleOgRequest(c, true));
+app.use(
+  ":domain/icon",
+  middleware,
+  cache({
+    cacheName: `icons-${CACHE_VERSION}`,
+    cacheControl: `max-age=${CACHE_MAX_AGE}`,
+  }),
+  handleIconRequest
+);
+
+app.use(
+  ":domain/og",
+  middleware,
+  cache({
+    cacheName: `og-images-${CACHE_VERSION}`,
+    cacheControl: `max-age=${CACHE_MAX_AGE}`,
+  }),
+  (c) => handleOgRequest(c)
+);
+
+app.use(
+  ":domain/twitterog",
+  middleware,
+  cache({
+    cacheName: `twitter-og-images-${CACHE_VERSION}`,
+    cacheControl: `max-age=${CACHE_MAX_AGE}`,
+  }),
+  (c) => handleOgRequest(c, true)
+);
 
 export default app;
