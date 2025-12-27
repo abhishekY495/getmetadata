@@ -3,15 +3,12 @@ export const SITE_URL = "https://getmetadata.abhisheky495.workers.dev";
 export const SITE_NAME = "GetMetadata";
 export const SITE_DESCRIPTION =
   "Get metadata of a website including title, description, icon, og, etc.";
-export const SITE_ICON =
-  "https://getmetadata.abhisheky495.workers.dev/icon.png";
-export const SITE_OG_IMAGE =
-  "https://getmetadata.abhisheky495.workers.dev/og-image.png";
+export const SITE_ICON = `${SITE_URL}/icon.png`;
+export const SITE_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 //
 export const FETCH_TIMEOUT_MS = 10000;
-export const USER_AGENT =
-  "GetMetaDataBot/1.0 (https://getmetadata.abhisheky495.workers.dev)";
+export const USER_AGENT = `GetMetaDataBot/1.0 (${SITE_URL})`;
 
 // Elements
 export const TITLE_ELEMENTS = ["head > title", "title"];

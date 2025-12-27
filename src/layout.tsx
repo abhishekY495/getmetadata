@@ -35,7 +35,7 @@ export const layout = jsxRenderer(({ children }) => {
         <meta name="twitter:image:height" content="630" />
         <meta name="twitter:image:type" content="image/png" />
       </head>
-      <body class="bg-neutral-900 text-white overflow-y-scroll min-h-screen flex flex-col p-4">
+      <body class="bg-neutral-900 text-neutral-300 overflow-y-scroll min-h-screen flex flex-col p-4 mb-30">
         <div class="flex-1">{children}</div>
       </body>
     </html>

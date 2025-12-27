@@ -1,13 +1,25 @@
+import { Header } from "../components/header";
+import { Icon } from "../components/icon";
+import { Metadata } from "../components/metadata";
+import { OpenGraph } from "../components/open-graph";
+import { QuickStart } from "../components/quick-start";
+
 export const Home = () => {
   return (
-    <>
-      <header class="flex flex-col items-center justify-center gap-1 my-8">
-        <img src="/favicon.svg" alt="GetMetadata" class="size-20" />
-        <h1 class="text-4xl font-bold">GetMetadata</h1>
-      </header>
-      <p class="text-center mt-10">
-        Get metadata including title, description, icon, og, etc. of a website
-      </p>
-    </>
+    <div class="max-w-4xl mx-auto">
+      <Header />
+
+      <hr class="my-8 border-neutral-700" />
+
+      <div class="space-y-16">
+        <QuickStart />
+        <hr class="my-8 mb-12 border-neutral-700" />
+        <Metadata />
+        <hr class="my-8 mb-12 border-neutral-700" />
+        <Icon />
+        <hr class="my-8 mb-12 border-neutral-700" />
+        <OpenGraph />
+      </div>
+    </div>
   );
 };
