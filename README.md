@@ -10,7 +10,9 @@ Built with [Hono.js](https://hono.dev) and [Cloudflare Workers](https://workers.
 All endpoints follow the pattern - `https://getmetadata.abhisheky495.workers.dev/{domain}/{key}`
 
 - `{domain}` - The domain to fetch metadata from.
+
   - https://getmetadata.abhisheky495.workers.dev/github.com
+
 - `{key}` - The key to fetch icon, og and twitterog
   - https://getmetadata.abhisheky495.workers.dev/github.com/icon
   - https://getmetadata.abhisheky495.workers.dev/github.com/og
@@ -65,4 +67,5 @@ Open Graph or OG is an image that is used to represent the website on social med
 ### Query parameters
 
 - `fallback` - The fallback image is used if the Open Graph image is not found. This must be a valid image URL or it will return an error.
+
   - https://getmetadata.abhisheky495.workers.dev/microsoft.com/og?fallback=https://avatar.vercel.sh/123?size=400
