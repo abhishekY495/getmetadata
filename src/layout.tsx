@@ -6,6 +6,8 @@ import {
   SITE_OG_IMAGE,
   SITE_URL,
 } from "./utils/constants";
+import { Footer } from "./components/footer";
+import { Header } from "./components/header";
 
 export const layout = jsxRenderer(({ children }) => {
   return (
@@ -36,7 +38,9 @@ export const layout = jsxRenderer(({ children }) => {
         <meta name="twitter:image:type" content="image/png" />
       </head>
       <body class="bg-neutral-900 text-neutral-300 overflow-y-scroll min-h-screen flex flex-col p-4 mb-30">
-        <div class="flex-1">{children}</div>
+        <Header />
+        <main class="flex-1">{children}</main>
+        <Footer />
       </body>
     </html>
   );

@@ -5,14 +5,21 @@ export const Header = () => {
       <h1 class="text-4xl font-bold">GetMetadata</h1>
       {/* Description */}
       <p class="text-center mt-3">
-        An API service that extracts metadata from any website, including title,
+        An{" "}
+        <a
+          href="https://github.com/abhishekY495/getmetadata"
+          target="_blank"
+          class="text-blue-400 hover:underline underline-offset-2 font-semibold"
+        >
+          Open-source
+        </a>{" "}
+        API service that extracts metadata from any website, including title,
         description, icon, and Open Graph images.
         <br />
         Built with{" "}
         <a
           href="https://hono.dev"
           target="_blank"
-          rel="noopener noreferrer"
           class="text-blue-400 hover:underline underline-offset-2 font-semibold"
         >
           Hono.js
@@ -21,7 +28,6 @@ export const Header = () => {
         <a
           href="https://workers.cloudflare.com"
           target="_blank"
-          rel="noopener noreferrer"
           class="text-blue-400 hover:underline underline-offset-2 font-semibold"
         >
           Cloudflare Workers
