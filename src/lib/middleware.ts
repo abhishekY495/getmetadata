@@ -1,9 +1,8 @@
 import { Context, Next } from "hono";
 import { isValidURL } from "../utils/is-valid-url";
-import { Bindings } from "../../types";
 
 export const middleware = async (
-  c: Context<{ Bindings: Bindings }>,
+  c: Context<{ Bindings: CloudflareBindings }>,
   next: Next
 ) => {
   const domain = c.req.param("domain");

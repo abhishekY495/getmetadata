@@ -6,9 +6,8 @@ import { handleMetadataRequest } from "./lib/handle-metadata-request";
 import { handleIconRequest } from "./lib/handle-icon-request";
 import { handleOgRequest } from "./lib/handle-og-request";
 import { middleware } from "./lib/middleware";
-import { Bindings } from "../types";
 
-const app = new Hono<{ Bindings: Bindings }>();
+const app = new Hono<{ Bindings: CloudflareBindings }>();
 
 app.use(layout);
 
