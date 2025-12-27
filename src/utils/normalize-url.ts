@@ -1,4 +1,4 @@
-export const normalizeIconUrl = (iconUrl: string, domain: string): string => {
+export const normalizeUrl = (iconUrl: string, domain: string): string => {
   if (iconUrl.startsWith("https://")) {
     return iconUrl;
   }

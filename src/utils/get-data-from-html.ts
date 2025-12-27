@@ -10,7 +10,7 @@ import {
   TWITTER_IMAGE_ELEMENTS,
   TWITTER_TITLE_ELEMENTS,
 } from "./constants";
-import { normalizeIconUrl } from "./normalize-icon-url";
+import { normalizeUrl } from "./normalize-url";
 import * as cheerio from "cheerio";
 
 export const getDataFromHtml = async (
@@ -46,7 +46,7 @@ export const getDataFromHtml = async (
   for (const selector of ICON_ELEMENTS) {
     const href = $(selector).attr("href");
     if (href) {
-      icon = normalizeIconUrl(href, domain);
+      icon = normalizeUrl(href, domain);
       break;
     }
   }
@@ -68,7 +68,7 @@ export const getDataFromHtml = async (
   for (const selector of OG_IMAGE_ELEMENTS) {
     const text = $(selector).attr("content");
     if (text) {
-      ogImage = normalizeIconUrl(text, domain);
+      ogImage = normalizeUrl(text, domain);
       break;
     }
   }
@@ -90,7 +90,7 @@ export const getDataFromHtml = async (
   for (const selector of TWITTER_IMAGE_ELEMENTS) {
     const text = $(selector).attr("content");
     if (text) {
-      twitterImage = normalizeIconUrl(text, domain);
+      twitterImage = normalizeUrl(text, domain);
       break;
     }
   }
